@@ -2,7 +2,7 @@
   "name": "globe-site",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://tiannalopesosu.github.io/globe-site",
+  "homepage": "https://TiannaLopesOSU.github.io/globe-site",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
