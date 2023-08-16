@@ -1,10 +1,6 @@
 <template>
   <div class="container">
-    <div class="card">
-      <div class="card-header">Planet Earth!</div>
-      <div class="card-body"><div id="threeCanvasContainer"></div></div>
-      <div class="card-footer"></div>
-    </div>
+    <div><div id="globeCanvasContainer"></div></div>
   </div>
 </template>
 
@@ -23,9 +19,7 @@ export default {
   },
   mounted() {
     const globeUrl = new URL("../assets/globe.glb", import.meta.url);
-    const planeUrl = new URL("../assets/plane.glb", import.meta.url);
-
-    const canvasContainer = document.getElementById("threeCanvasContainer");
+    const canvasContainer = document.getElementById("globeCanvasContainer");
 
     const renderer = new THREE.WebGLRenderer();
     this.renderer = renderer;
@@ -64,23 +58,10 @@ export default {
       }
     );
 
-    assetLoader.load(
-      planeUrl.href,
-      (gltf) => {
-        model = gltf.scene;
-        scene.add(model);
-        model.position.set(0, 0, 0);
-      },
-      undefined,
-      (error) => {
-        console.error(error);
-      }
-    );
-
     function animate() {
       // Rotate the camera around the model
-      camera.position.x = Math.sin(Date.now() * 0.001) * 50; // Adjust the radius
-      camera.position.z = Math.cos(Date.now() * 0.001) * 50; // Adjust the radius
+      camera.position.x = Math.sin(Date.now() * -0.001) * 50; // Adjust the radius
+      camera.position.z = Math.cos(Date.now() * -0.001) * 50; // Adjust the radius
       camera.lookAt(0, 0, 0);
 
       // Call the animate function to keep rendering
