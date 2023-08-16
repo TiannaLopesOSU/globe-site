@@ -37,7 +37,7 @@ export default {
       1000
     );
     this.camera = camera;
-    camera.position.set(10, 0, 50); // Move camera closer along the Z-axis
+    camera.position.set(10, 0, 50);
     camera.lookAt(0, 0, 0);
 
     const ambientLight = new THREE.AmbientLight(0xfffffff);

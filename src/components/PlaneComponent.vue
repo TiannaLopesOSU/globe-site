@@ -1,7 +1,6 @@
 <template>
-  <div class="container">
-    <div><div id="planeCanvasContainerForwards"></div></div>
-    <div><div id="planeCanvasContainerBackwards"></div></div>
+  <div>
+    <div><div id="planeCanvasContainer"></div></div>
   </div>
 </template>
 
@@ -14,8 +13,7 @@ export default {
   data() {
     return {
       camera: null,
-      rendererForwards: null,
-      rendererBackwards: null,
+      renderer: null,
       scene: null,
     };
   },
@@ -24,46 +22,29 @@ export default {
   },
   mounted() {
     const planeUrl = new URL("../assets/plane.glb", import.meta.url);
-    const canvasContainerForwards = document.getElementById(
-      "planeCanvasContainerForwards"
-    );
-    const canvasContainerBackwards = document.getElementById(
-      "planeCanvasContainerBackwards"
-    );
+    const canvasContainer = document.getElementById("planeCanvasContainer");
 
-    const rendererForwards = new THREE.WebGLRenderer();
-    const rendererBackwards = new THREE.WebGLRenderer();
+    var renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setClearColor(0x000000, 0);
 
-    this.rendererForwards = rendererForwards;
-    this.rendererBackwards = rendererBackwards;
+    this.renderer = renderer;
 
-    if (this.direction == "forward") {
-      rendererForwards.shadowMap.enabled = true;
-      rendererForwards.setSize(
-        window.innerWidth * 0.5,
-        window.innerHeight * 0.2
-      );
-      canvasContainerForwards.appendChild(rendererForwards.domElement);
-    } else {
-      rendererBackwards.shadowMap.enabled = true;
-      rendererBackwards.setSize(
-        window.innerWidth * 0.5,
-        window.innerHeight * 0.2
-      );
-      canvasContainerBackwards.appendChild(rendererBackwards.domElement);
-    }
+    renderer.shadowMap.enabled = true;
+    renderer.setSize(window.innerWidth * 0.3, window.innerHeight * 0.3);
+    canvasContainer.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     this.scene = scene;
     scene.background = new THREE.Color(0xffffff);
     const camera = new THREE.PerspectiveCamera(
-      3,
+      45,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
     this.camera = camera;
-    camera.position.set(10, 0, 50); // Move camera closer along the Z-axis
+
+    camera.position.set(-26, 0, 0);
     camera.lookAt(0, 0, 0);
 
     const ambientLight = new THREE.AmbientLight(0xfffffff);
@@ -78,7 +59,7 @@ export default {
         model = gltf.scene;
         scene.add(model);
         model.position.set(-20, 0, 0);
-        model.scale.set(0.2, 0.2, 0.2);
+        model.scale.set(0.1, 0.1, 0.1);
       },
       undefined,
       (error) => {
@@ -87,24 +68,8 @@ export default {
     );
 
     function animate() {
-      if (this.direction === "forwards") {
-        // Rotate the camera around the model
-        camera.position.x = Math.sin(Date.now() * -0.001) * 50; // Adjust the radius
-        camera.position.z = Math.cos(Date.now() * -0.001) * 50; // Adjust the radius
-        camera.lookAt(0, 0, 0);
-      } else {
-        // Rotate the camera around the model
-        camera.position.x = Math.sin(Date.now() * 0.001) * 50; // Adjust the radius
-        camera.position.z = Math.cos(Date.now() * 0.001) * 50; // Adjust the radius
-        camera.lookAt(0, 0, 0);
-      }
+      renderer.render(scene, camera);
 
-      // Call the animate function to keep rendering
-      if (this.direction === "forward") {
-        rendererForwards.render(scene, camera);
-      } else {
-        rendererBackwards.render(scene, camera);
-      }
       requestAnimationFrame(animate);
     }
 
@@ -113,19 +78,10 @@ export default {
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      if (this.direction === "forward") {
-        rendererForwards.setSize(
-          window.innerWidth * 0.5,
-          window.innerHeight * 0.5
-        );
-      } else {
-        rendererBackwards.setSize(
-          window.innerWidth * 0.5,
-          window.innerHeight * 0.5
-        );
-      }
+      renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
     });
   },
+  methods: {},
 };
 </script>
 
