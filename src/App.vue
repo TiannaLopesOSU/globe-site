@@ -1,14 +1,14 @@
 <template>
-  <Globe />
+  <HomePageView />
 </template>
 
 <script>
-import Globe from "./components/Globe.vue";
+import HomePageView from "./views/HomePageView.vue";
 
 export default {
   name: "App",
   components: {
-    Globe,
+    HomePageView,
   },
 };
 </script>
