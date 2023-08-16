@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     Globe Component
-    <div id="globe-container"></div>
+    <div id="threeCanvasContainer"></div>
   </div>
 </template>
 
@@ -11,18 +11,19 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 export default {
   name: "GlobeComponent",
   data() {
-    return {
-      globeUrl: new URL("../assets/globe.glb", import.meta.url),
-    };
+    return {};
   },
   mounted() {
+    const narratorUrl = new URL("../assets/globe.glb", import.meta.url);
+    const canvasContainer = document.getElementById("threeCanvasContainer");
+
     const renderer = new THREE.WebGLRenderer();
     renderer.shadowMap.enabled = true;
     renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
-    this.$el.querySelector("#globe-container").appendChild(renderer.domElement);
+    canvasContainer.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-
+    scene.background = new THREE.Color(0xffffff);
     const camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -31,34 +32,37 @@ export default {
     );
     camera.position.set(5, 6, 9);
     camera.lookAt(0, 0, 0);
-    const assetLoader = new GLTFLoader();
-    const light = new THREE.SpotLight(0xffffff);
-    light.position.set(100, 100, -100);
-    light.castShadow = true;
-    light.angle = 0.2;
-    scene.add(light);
 
+    const ambientLight = new THREE.AmbientLight(0xfffffff);
+    scene.add(ambientLight);
+
+    const assetLoader = new GLTFLoader();
+    let model;
     assetLoader.load(
-      this.globeUrl.href,
+      narratorUrl.href,
       function (gltf) {
-        const model = gltf.scene;
+        model = gltf.scene;
         scene.add(model);
-        model.position.set(-3, 4, 9);
+        model.position.set(3, 4, 10);
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         camera.lookAt(center);
-
-        // const mesh = gltf.scene.children[0];
-        console.log(gltf.scene);
-        // const shapeKeys = mesh.morphTargetInfluences; // Access the shape keys/morph targets
-        // console.log(shapeKeys);
       },
       undefined,
       function (error) {
         console.error(error);
       }
     );
-    renderer.render(scene, camera);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      renderer.render(scene, camera);
+    }
+
+    renderer.setAnimationLoop(animate);
+
+    window.addEventListener("resize", function () {});
   },
 };
 </script>
